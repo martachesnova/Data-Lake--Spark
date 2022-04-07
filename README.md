@@ -1,4 +1,4 @@
-# Data Lake with Spark
+# Data Lake - Spark
 
 A music streaming startup has grown their user base and song database by a lot, and they wanted to move their data to a data lake. Original data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in the app.
 
