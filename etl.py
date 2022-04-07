@@ -90,7 +90,7 @@ def process_log_data(spark, input_data, output_data):
     # read in song data to use for songplays table
     song_df = spark.read.parquet(input_data, 'song_data/A/A/B/*.json')
 
-    combined_df = df.join(song_df, song_df.title == df.song)
+    combined_df = df.join(song_df, (song_df.title == df.song) & (song_df.duration == df.length) & (song_df.title == df.song), how = 'left')
 
     # extract columns from joined song and log datasets to create songplays table 
     songplays_table = combined_df.select(function.monotonically_increasing_id().alias('songplay_id').collect(),
