@@ -77,12 +77,12 @@ def process_log_data(spark, input_data, output_data):
     df = df.withColumn('start_time', get_timestamp(df.ts)) 
     
     # extract columns to create time table
-    time_table = df.select(col('datetime').alias('start_time'),
-                            hour('datetime').alias('hour'),
-                            dayofmonth('datetime').alias('day'),
-                            weekofyear('datetime').alias('week'),
-                            month('datetime').alias('month'),
-                            year('datetime').alias('year')).dropDuplicates()
+    time_table = df.select(col('start_time'),
+                            hour(df.start_time).alias('hour'),
+                            dayofmonth(df.start_time).alias('day'),
+                            weekofyear(df.start_time).alias('week'),
+                            month(df.start_time).alias('month'),
+                            year(df.start_time).alias('year')).dropDuplicates()
     
     # write time table to parquet files partitioned by year and month
     time_table.write.partitionBy('year', 'month').parquet(os.path.join(output_data, 'time.parquet'), 'overwrite')
@@ -93,17 +93,15 @@ def process_log_data(spark, input_data, output_data):
     combined_df = df.join(song_df, (song_df.title == df.song) & (song_df.duration == df.length) & (song_df.title == df.song), how = 'left')
 
     # extract columns from joined song and log datasets to create songplays table 
-    songplays_table = combined_df.select(function.monotonically_increasing_id().alias('songplay_id').collect(),
-                                         col('ts').alias('ts'),
-                                         col('userId').alias('user_id'),
-                                         col('level'),
-                                         col('song_id').alias('song_id'),
-                                         col('artist_id'),
-                                         col('sessionId').alias('session_id'),
-                                         col('location'),
-                                         col('userAgent').alias('user_agent'),
-                                         year('datetime').alias('year'),
-                                         month('datetime').alias('month'))
+    songplays_table = combined_df.select(col('start_time'),
+                                      col('userId').alias('user_id'),
+                                      df.level,
+                                      song_df.song_id, song_df.artist_id,
+                                      col('sessionId').alias('session_id'),
+                                      df.location,
+                                      col('userAgent').alias('user_agent'),
+                                      year('start_time').alias('year'),
+                                      month('start_time').alias('month')).withColumn('songplay_id', monotonically_increasing_id())
     
     # write songplays table to parquet files partitioned by year and month
     songplays_table.write.partitionBy('year', 'month').parquet(os.path.join(output_data, 'songplays.parquet'), 'overwrite')
