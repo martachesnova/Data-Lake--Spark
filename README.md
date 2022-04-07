@@ -4,6 +4,8 @@ A music streaming startup has grown their user base and song database by a lot, 
 
 I've built an ETL pipeline that extracts their data from S3, processes it using Spark, and loads the data back into S3 as a set of dimensional tables. This allows the analytics team to continue finding insights in what songs their users are listening to.
 
+<hr>
+
 ### Project Datasets
 You'll be working with two datasets that reside in S3. Here are the S3 links for each:
 <br>
@@ -19,7 +21,7 @@ Log data: `s3://udacity-dend/log_data` <br>
 <b>users</b> - users in the app <br>
 <b>songs</b> - songs in music database<br>
 <b>artists</b> - artists in music database<br>
-<b>time</b> - timestamps of records in songplays broken down into specific units<br>
+<b>time</b> - timestamps of records in <b>songplays</b> broken down into specific units<br>
 
 
 ### Spark Process <br>
